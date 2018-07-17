@@ -20,6 +20,7 @@ fn download_deps<P: AsRef<Path>, Q: AsRef<Path>>(toml: P, dest: Q) {
         if p.name() == workspace.current().unwrap().name() {
             continue;
         }
+        fs::create_dir_all(&dest).unwrap();
         let dest = fs::canonicalize(&dest).unwrap();
         let dest_name = &dest.join(&p.name() as &str);
         if !dest_name.exists() {
