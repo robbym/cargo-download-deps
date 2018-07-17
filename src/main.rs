@@ -20,17 +20,22 @@ fn download_deps<P: AsRef<Path>, Q: AsRef<Path>>(toml: P, dest: Q) {
         if p.name() == workspace.current().unwrap().name() {
             continue;
         }
-        dir::copy(
-            p.root(),
-            fs::canonicalize(&dest).unwrap(),
-            &CopyOptions {
-                overwrite: true,
-                skip_exist: false,
-                buffer_size: 64000,
-                copy_inside: true,
-                depth: 0,
-            },
-        ).unwrap();
+        let dest = fs::canonicalize(&dest).unwrap();
+        let dest_name = &dest.join(&p.name() as &str);
+        if !dest_name.exists() {
+            dir::copy(
+                p.root(),
+                &dest,
+                &CopyOptions {
+                    overwrite: true,
+                    skip_exist: false,
+                    buffer_size: 64000,
+                    copy_inside: true,
+                    depth: 0,
+                },
+            ).unwrap();
+            fs::rename(&dest.join(p.root().file_name().unwrap()), &dest_name).unwrap();
+        }
     }
 }
 
@@ -44,7 +49,7 @@ fn main() {
         .subcommand(
             SubCommand::with_name("download-deps")
                 .arg(Arg::with_name("TOML").required(true).long("config").takes_value(true))
-                .arg(Arg::with_name("DEST").required(true).long("download_path").takes_value(true)),
+                .arg(Arg::with_name("DEST").required(true).long("download-path").takes_value(true)),
         )
         .get_matches();
     let args = args.subcommand_matches("download-deps").unwrap();
