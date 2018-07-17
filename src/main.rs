@@ -43,8 +43,8 @@ fn main() {
         .setting(AppSettings::TrailingVarArg)
         .subcommand(
             SubCommand::with_name("download-deps")
-                .arg(Arg::with_name("TOML").required(true))
-                .arg(Arg::with_name("DEST").required(true)),
+                .arg(Arg::with_name("TOML").required(true).long("config").takes_value(true))
+                .arg(Arg::with_name("DEST").required(true).long("download_path").takes_value(true)),
         )
         .get_matches();
     let args = args.subcommand_matches("download-deps").unwrap();
