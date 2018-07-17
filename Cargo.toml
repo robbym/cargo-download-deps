@@ -1,0 +1,9 @@
+[package]
+name = "cargo-download-deps"
+version = "0.1.0"
+authors = ["Robby Madruga <robbymadruga@gmail.com>"]
+
+[dependencies]
+cargo = "0.28.0"
+fs_extra = "1.1.0"
+clap = "2.32.0"
