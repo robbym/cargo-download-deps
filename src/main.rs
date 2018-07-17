@@ -9,7 +9,7 @@ use cargo::{core::Workspace, ops, util::Config};
 
 use fs_extra::dir::{self, CopyOptions};
 
-use clap::{App, Arg, SubCommand};
+use clap::{App, Arg, SubCommand, AppSettings};
 
 fn download_deps<P: AsRef<Path>, Q: AsRef<Path>>(toml: P, dest: Q) {
     let config = Config::default().unwrap();
@@ -35,16 +35,19 @@ fn download_deps<P: AsRef<Path>, Q: AsRef<Path>>(toml: P, dest: Q) {
 }
 
 fn main() {
-    let args = App::new("cargo download-deps")
+    let args = App::new("cargo-download-deps")
         .version("1.0")
+        .bin_name("cargo")
         .about("Does great things!")
         .author("Robby M.")
+        .setting(AppSettings::TrailingVarArg)
         .subcommand(
             SubCommand::with_name("download-deps")
                 .arg(Arg::with_name("TOML").required(true))
                 .arg(Arg::with_name("DEST").required(true)),
         )
         .get_matches();
+    let args = args.subcommand_matches("download-deps").unwrap();
     let toml = args.value_of("TOML").unwrap();
     let dest = args.value_of("DEST").unwrap();
     download_deps(toml, dest);
